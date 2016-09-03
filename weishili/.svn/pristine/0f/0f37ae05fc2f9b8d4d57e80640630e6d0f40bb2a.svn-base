@@ -1,0 +1,25 @@
+package com.lilei.weishi2.activities;
+
+
+public class Set2Activity extends BaseSetupActivity {
+
+	@Override
+	public void nextActivity() {
+		// TODO Auto-generated method stub
+		startActivity(Set3Activity.class);
+	}
+
+	@Override
+	public void preActivity() {
+		// TODO Auto-generated method stub
+		startActivity(Set1Activity.class);
+	}
+
+	@Override
+	public void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_set2);
+	}
+
+	
+}

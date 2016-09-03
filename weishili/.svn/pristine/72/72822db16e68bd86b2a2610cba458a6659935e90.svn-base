@@ -1,0 +1,49 @@
+package com.lilei.weishi2.domain;
+
+import android.R.integer;
+
+/**
+ * 更新APK数据封装类
+ * @author 李小磊
+ *
+ */
+public class UrlBean {
+	private int versionCode;  //新版本号
+	private String desc;	//描述信息
+	private String url;		//新版本下载的url
+	public UrlBean(int versionCode, String desc, String url) {
+		super();
+		this.versionCode = versionCode;
+		this.desc = desc;
+		this.url = url;
+	}
+	
+	public UrlBean() {
+		super();
+	}
+
+	public int getVersionCode() {
+		return versionCode;
+	}
+	public void setVersionCode(int versionCode) {
+		this.versionCode = versionCode;
+	}
+	public String getDesc() {
+		return desc;
+	}
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	@Override
+	public String toString() {
+		return "UrlBean [versionCode=" + versionCode + ", desc=" + desc
+				+ ", url=" + url + "]";
+	}
+	
+}

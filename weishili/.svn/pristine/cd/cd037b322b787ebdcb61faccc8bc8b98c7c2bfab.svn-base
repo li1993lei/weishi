@@ -1,0 +1,51 @@
+package com.lilei.weishi2.service;
+
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.telephony.gsm.SmsManager;
+import android.telephony.gsm.SmsMessage;
+
+public class LostFindService extends Service {
+	MyBroadcastReceiver receiver;
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private class MyBroadcastReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Bundle bundle = intent.getExtras();
+			
+			Object datas[] = (Object[]) bundle.get("pdus");
+			for (Object object : datas) {
+				SmsMessage message = SmsMessage.createFromPdu((byte[])object);
+				System.out.println(message.getMessageBody()+"::"+message.getOriginatingAddress());
+				//在这里对接受到的短信进行处理  
+				abortBroadcast();  //中止广播
+			}
+
+		}
+
+	}
+	@Override
+	public void onCreate() {
+		receiver = new MyBroadcastReceiver();
+		IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+		filter.setPriority(Integer.MAX_VALUE); //设置优先级
+		registerReceiver(receiver, filter);
+		super.onCreate();
+	}
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+}

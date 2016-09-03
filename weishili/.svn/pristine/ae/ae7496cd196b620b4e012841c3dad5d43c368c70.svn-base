@@ -1,0 +1,31 @@
+package com.lilei.weishi2.activities;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class Set1Activity extends BaseSetupActivity {
+
+
+
+	@Override
+	public void nextActivity() {
+		// TODO Auto-generated method stub
+		startActivity(Set2Activity.class);
+	}
+
+	@Override
+	public void preActivity() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_set1);
+	}
+
+	
+}

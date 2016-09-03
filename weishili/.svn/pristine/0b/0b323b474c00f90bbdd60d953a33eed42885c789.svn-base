@@ -1,0 +1,342 @@
+package com.lilei.weishi2.activities;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.view.View;
+import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lilei.weishi2.R;
+import com.lilei.weishi2.domain.UrlBean;
+import com.lilei.weishi2.utils.StreamUtils;
+
+public class SplashActivity extends Activity {
+
+	private static final int LOADMAIN = 0;
+	private static final int SHOWUPDATEDIALOG = 1;
+	protected static final int ERROR = 2;
+	private RelativeLayout rl_root;// 界面根布局
+	private TextView tv_versionName;// 显示版本名的组件
+	private ProgressBar pb_download;// 下载最新版本apk的进度条
+	private int	versionCode;        //版本号
+	private String versionName;     //版本名
+	private long startTimes;              //刚开始联网的时间
+	private UrlBean parserJsonBean; //Url信息封装类
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// 初始化界面
+		initView();
+		//初始化数据
+		initData();
+		// 初始化动画
+		initAnimation();
+		//检测服务器版本
+		cheackVersion();
+	}
+
+	private void cheackVersion() {
+		// 联网操作子线程中进行
+		new Thread(new Runnable() {
+			HttpURLConnection conn = null;
+			int errorCode = -1;//正常，没有错误
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					  startTimes = System.currentTimeMillis();
+					URL url = new URL("http://192.168.74.238:8080/update.json");
+					conn = (HttpURLConnection) url.openConnection();
+					
+					conn.setRequestMethod("GET");  //请求方式
+					conn.setConnectTimeout(5000);  //链接超时时间
+					conn.setReadTimeout(5000);     //读数据超时时间
+					
+					int responseCode = conn.getResponseCode();//返回码
+					if(responseCode == 200){      //访问成功
+						InputStream is = conn.getInputStream();
+						String data = StreamUtils.readFromStream(is);
+						System.out.println(data);
+						parserJsonBean = parserJsonFromData(data);
+					}else{
+						errorCode = 404;
+					}
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					errorCode = 4002;
+					e.printStackTrace();
+				}catch (IOException e) {
+					// TODO: handle exception
+					errorCode = 4001;
+					e.printStackTrace();
+				}catch (JSONException e) {
+					// TODO: handle exception
+					errorCode = 4003;
+					e.printStackTrace();
+				}finally{
+					Message msg = Message.obtain();
+					if(errorCode == -1){ //正常
+						msg.what = isNewVersion(parserJsonBean);
+					}else {
+						msg.what = ERROR;
+						msg.arg1 = errorCode;
+					}
+					long endTimes = System.currentTimeMillis();
+					//保证页面执行超过三秒  以上的值为毫秒
+					if((endTimes - startTimes) < 3000){
+						SystemClock.sleep(3000 - (endTimes - startTimes)); //时间不足三秒 在睡完剩下的时间
+					}
+					handler.sendMessage(msg);
+					if(conn != null){
+						conn.disconnect();
+					}
+				}
+			}
+		}).start();
+		
+	}
+	private Handler handler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			//处理子线程的消息
+			switch (msg.what) {
+			case LOADMAIN:    //进入主界面
+				loadMain();
+				System.out.println("进去主界面");
+				break;
+			case ERROR:
+				switch (msg.arg1) {
+				case 404://资源找不到
+				    Toast.makeText(getApplicationContext(), "404资源找不到", 0).show();
+					break;
+				case 4001://找不到网络
+					Toast.makeText(getApplicationContext(), "4001没有网络", 0).show();
+					break;
+				case 4003://json格式错误
+					Toast.makeText(getApplicationContext(), "4003json格式错误", 0).show();
+					break;
+
+				default:
+					break;
+				}
+				loadMain();
+				break;
+			case SHOWUPDATEDIALOG: //弹出升级对话框
+				showUpdateDialog();
+				break;
+			default:
+				break;
+			}
+		}
+		
+	};
+
+	protected int isNewVersion(UrlBean parserJsonBean2) {
+		int serverCode = parserJsonBean2.getVersionCode(); //拿到服务器的版本
+		if(versionCode == serverCode){
+			//进入主页面
+			return LOADMAIN;
+		}else{
+			//发现新版本
+			return SHOWUPDATEDIALOG;
+		}
+		
+	}
+
+	protected void showUpdateDialog() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		//这样设置用户就不可点击取消按钮 
+		//builder.setCancelable(false);   
+		//设置取消按钮监听器
+		builder.setOnCancelListener(new OnCancelListener() {
+			
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		builder.setTitle("提醒");
+		builder.setMessage("是否更新版本？新版本有以下特性："+parserJsonBean.getDesc());
+		builder.setPositiveButton("更新", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+//				System.out.println("下载APK并更新");
+				downloadApk();     //下载新版本
+			}
+		});
+		builder.setNegativeButton("取消", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				//进入主页面
+				loadMain();
+			}
+		});
+		builder.create().show();
+	}
+
+	protected void downloadApk() {
+		// TODO Auto-generated method stub
+		HttpUtils httpUtils = new HttpUtils();
+//		System.out.println(parserJsonBean.getUrl());
+		//先删除存在的APK
+		File file = new File("/sdcard/weishi.apk");
+		file.delete();
+		httpUtils.download(parserJsonBean.getUrl(), "/sdcard/weishi.apk", new RequestCallBack<File>() {
+			
+			@Override
+			public void onLoading(long total, long current, boolean isUploading) {
+				pb_download.setVisibility(View.VISIBLE);  //可视
+				pb_download.setMax((int)total);			  //总大小
+				pb_download.setProgress((int)current);    //当前进度
+				super.onLoading(total, current, isUploading);
+			}
+			@Override
+			public void onSuccess(ResponseInfo<File> arg0) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), "下载新版本成功", 1).show();
+				//安装apk
+				installApk();//安装apk
+				pb_download.setVisibility(View.GONE); 
+			}
+			
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				// TODO Auto-generated method stub
+				//下载失败
+				Toast.makeText(getApplicationContext(), "下载新版本失败", 1).show();
+				pb_download.setVisibility(View.GONE);//隐藏进度条
+			}
+		});
+	}
+
+	protected void installApk() {
+		/*<intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="content" />
+        <data android:scheme="file" />
+        <data android:mimeType="application/vnd.android.package-archive" />
+    </intent-filter>*/
+		Intent intent = new Intent("android.intent.action.VIEW");
+		intent.addCategory("android.intent.category.DEFAULT");
+		String typeString = "application/vnd.android.package-archive";
+		Uri uri = Uri.fromFile(new File("/sdcard/weishi.apk"));
+		intent.setDataAndType(uri, typeString);
+		startActivityForResult(intent, 0);
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		loadMain();
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	protected void loadMain() {
+		// TODO Auto-generated method stub
+		Intent intent = new Intent(SplashActivity.this,HomeActivity.class);
+		startActivity(intent);
+		finish();  //把自己关闭
+	}
+
+	protected UrlBean parserJsonFromData(String data) throws JSONException {
+		UrlBean bean = new UrlBean();
+		JSONObject jsonObject;
+		// {"version":"2","url":"http://10.0.2.2:8080/xxx.apk","desc":"增加了防病毒功能"}
+		
+			jsonObject = new JSONObject(data);
+			bean.setVersionCode(jsonObject.getInt("versionCode"));
+			bean.setDesc(jsonObject.getString("description"));
+			bean.setUrl(jsonObject.getString("downloadUrl"));
+		
+		return bean;
+	}
+
+	private void initData() {
+		// TODO Auto-generated method stub
+		PackageManager pm = getPackageManager();
+		try {
+			PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
+			versionCode = packageInfo.versionCode;
+			versionName = packageInfo.versionName;
+			tv_versionName.setText(versionName);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void initAnimation() {
+		// 透明度动画
+		AlphaAnimation aa = new AlphaAnimation(0f, 1.0f);
+		aa.setDuration(3000); // 播放
+		aa.setFillAfter(true); // 设置播放结束后的状态
+		// 缩放动画
+		ScaleAnimation sa = new ScaleAnimation(0f, 1.0f, 0f, 1.0f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		sa.setDuration(3000); // 播放
+		sa.setFillAfter(true); // 设置播放结束后的状态
+		// 旋转动画
+		RotateAnimation ra = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		ra.setDuration(3000); // 播放
+		ra.setFillAfter(true); // 设置播放结束后的状态
+		//动画集合
+		AnimationSet set = new AnimationSet(true);
+		set.addAnimation(aa);
+		set.addAnimation(sa);
+		set.addAnimation(ra);
+		rl_root.startAnimation(set);
+	}
+
+	private void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_splash);
+		rl_root = (RelativeLayout) findViewById(R.id.rl_splash_root);
+		tv_versionName = (TextView) findViewById(R.id.tv_splash_version_name);
+		pb_download = (ProgressBar) findViewById(R.id.pb_splash_download_progress);
+	}
+
+}

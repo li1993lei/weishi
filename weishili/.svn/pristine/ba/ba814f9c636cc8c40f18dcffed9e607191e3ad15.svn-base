@@ -1,0 +1,11 @@
+package com.lilei.weishi2.utils;
+
+/**
+ * 存储常量
+ * @author 李小磊
+ *
+ */
+public interface Constant {
+	String SPFILE = "config";
+	String PASSWORD = "password";
+}

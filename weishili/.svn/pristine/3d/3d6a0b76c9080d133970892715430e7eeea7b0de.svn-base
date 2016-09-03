@@ -1,0 +1,68 @@
+package com.lilei.weishi2.activities;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import com.lilei.weishi2.R;
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.RunningService;
+import com.lilei.weishi2.utils.SpTools;
+
+public class LostFindActivity extends Activity {
+	private ImageView iView;
+	private LinearLayout ll_bottom_menu;
+	private boolean isShowMenu;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		//如果第一次访问该页面 要首先进入设置界面
+		if(SpTools.getBoolean(getApplicationContext(), MyContant.ISSETUP, false)){
+			initView();//手机防盗界面
+		}else{  //进入设置界面并关闭自己
+ 			Intent intent = new Intent(LostFindActivity.this, Set1Activity.class);
+ 			startActivity(intent);
+ 			finish();
+		}
+		initView();
+		initData();
+	}
+
+	private void initData() {
+		// TODO Auto-generated method stub
+		if(RunningService.isRunningService(getApplicationContext(), "com.lilei.weishi2.service.LostFindService")){
+			iView.setImageResource(R.drawable.lock);
+		}else{
+			iView.setImageResource(R.drawable.unlock);
+		}
+	}
+
+	private void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_lost_find);
+		iView = (ImageView) findViewById(R.id.iv_icon_lost);
+		ll_bottom_menu = (LinearLayout) findViewById(R.id.ll_lostfind_menu_bottom);
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		
+//		if(keyCode == KeyEvent.KEYCODE_MENU){
+//			if(isShowMenu){
+//				ll_bottom_menu.setVisibility(View.VISIBLE);
+//			}else{
+//				ll_bottom_menu.setVisibility(View.GONE);
+//			}
+//			isShowMenu = !isShowMenu;
+//		}
+		return super.onKeyDown(keyCode, event);
+	}
+	public void enterSetting(View v){
+		Intent setup1 = new Intent(LostFindActivity.this, Set1Activity.class);
+		startActivity(setup1);
+		finish();
+	}
+}

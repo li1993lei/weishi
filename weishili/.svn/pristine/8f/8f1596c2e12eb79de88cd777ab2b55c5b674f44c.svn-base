@@ -1,0 +1,222 @@
+package com.lilei.weishi2.activities;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.lilei.weishi2.R;
+import com.lilei.weishi2.utils.Constant;
+import com.lilei.weishi2.utils.Md5Utils;
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.SpTools;
+
+public class HomeActivity extends Activity {
+	private GridView gvMenu;
+	private MyAdapter adapter;
+	private int icons[] = {R.drawable.safe,R.drawable.callmsgsafe,R.drawable.item_gv_selector_app
+			,R.drawable.taskmanager,R.drawable.netmanager,R.drawable.trojan
+			,R.drawable.sysoptimize,R.drawable.atools,R.drawable.settings};
+	
+	private String names[]={"手机防盗","通讯卫士","软件管家","进程管理","流量统计","病毒查杀","缓存清理","高级工具","设置中心"};
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		super.onCreate(savedInstanceState);
+		initView();  //初始化界面
+		initData();  //初始化数据
+		initEvent(); //初始化点击事件
+	}
+	/**
+	 * 点击事件
+	 */
+	private void initEvent() {
+		gvMenu.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				switch (position) {
+				case 0:         //进入手机防盗界面
+					if (TextUtils.isEmpty(SpTools.getString(getApplicationContext(), MyContant.PASSWORD, ""))){
+						//没有设置过密码
+						//设置密码对话框
+						showPhoneSettingPass();
+					} else {//设置过密码
+						//输入密码的对话框
+						showEnterPassDialog();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+	}
+	protected void showEnterPassDialog() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		View view = View.inflate(getApplicationContext(), R.layout.dialog_enter_password, null);
+		final EditText et_passone = (EditText) view.findViewById(R.id.et_dialog_enter_password_passone);
+		
+		Button bt_setpass = (Button) view.findViewById(R.id.bt_dialog_enter_password_login);
+		Button bt_cancel = (Button) view.findViewById(R.id.bt_dialog_enter_password_cancel);
+		
+		
+		builder.setView(view );
+		bt_setpass.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//设置密码
+				String passone = et_passone.getText().toString().trim();
+				
+				if ( TextUtils.isEmpty(passone)){
+					Toast.makeText(getApplicationContext(), "密码不能为空", 1).show();
+					return;
+				}  else {
+					// 密码判断,md5 2次加密
+					passone = Md5Utils.decode(Md5Utils.decode(passone));
+					//读取sp中保存的密文，进行判断
+					if (passone.equals(SpTools.getString(getApplicationContext(), MyContant.PASSWORD, ""))){
+						//一致
+						//进入手机防盗界面
+						Intent intent = new Intent(HomeActivity.this,LostFindActivity.class);
+						startActivity(intent);
+					} else {
+						//不一致
+						Toast.makeText(getApplicationContext(), "密码不正确", 1).show();
+						return;
+					}
+					
+					//关闭对话框
+					dialog.dismiss();
+				}
+				
+			}
+		});
+		bt_cancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();//关闭对话框
+			}
+		});
+		dialog = builder.create();
+		dialog.show();
+	}
+	/**
+	 * 自定义的对话框
+	 */
+	private AlertDialog dialog;
+	protected void showPhoneSettingPass() {
+		//自定义对话框
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		View view = View.inflate(getApplicationContext(), R.layout.dialog_setting_password, null);
+		final EditText et_passone = (EditText) view.findViewById(R.id.et_dialog_setting_password_passone);
+		final EditText et_passtwo = (EditText) view.findViewById(R.id.et_dialog_setting_password_passtwo);
+		Button bt_setpass = (Button) view.findViewById(R.id.bt_dialog_setting_password_setpass);
+		Button bt_cancel = (Button) view.findViewById(R.id.bt_dialog_setting_password_cancel);
+		
+		builder.setView(view);
+		bt_setpass.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//点击设置密码的逻辑
+				String passOne = et_passone.getText().toString().trim();
+				String passTwo = et_passtwo.getText().toString().trim();
+				if(TextUtils.isEmpty(passOne) || TextUtils.isEmpty(passTwo)){
+					Toast.makeText(getApplicationContext(), "密码不能为空", 0).show();
+					return;
+				}else if (!passOne.equals(passTwo)) {  //两者不相等
+					Toast.makeText(getApplicationContext(), "两次输入的密码不一致", 0).show();
+					return;
+				}else{
+					//保存密码
+//					System.out.println("baocunmima");
+					passOne = Md5Utils.decode(Md5Utils.decode(passOne));
+					SpTools.putString(getApplicationContext(),Constant.PASSWORD, passOne);
+					System.out.println("保存成功");
+					dialog.dismiss();
+				}
+				
+			}
+		});
+		bt_cancel.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		});
+		
+		dialog = builder.create();
+		dialog.show();
+	}
+	private class MyAdapter extends BaseAdapter{
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return icons.length;
+		}
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = View.inflate(getApplicationContext(), R.layout.gv_item_icon, null);
+			
+			TextView tvAppName = (TextView) view.findViewById(R.id.tv_item_home_gv_name);
+			ImageView ivAppIcon = (ImageView) view.findViewById(R.id.iv_item_home_gv_icon);
+			
+			ivAppIcon.setImageResource(icons[position]);
+			tvAppName.setText(names[position]);
+			
+			return view;
+		}
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+	}
+	/**
+	 * 初始化数据
+	 */
+	private void initData() {
+		// TODO Auto-generated method stub
+		adapter = new MyAdapter();
+		gvMenu.setAdapter(adapter);
+	}
+	/**
+	 * 初始化界面
+	 */
+	private void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_home);
+		gvMenu = (GridView) findViewById(R.id.gv_home_menu);
+	}
+}

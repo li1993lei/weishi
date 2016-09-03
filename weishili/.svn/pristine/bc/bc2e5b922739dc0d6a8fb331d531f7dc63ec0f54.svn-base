@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">weishi</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_lost_find">LostFindActivity</string>
+    <string name="title_activity_set1">Set1Activity</string>
+    <string name="title_activity_set2">Set2Activity</string>
+    <string name="title_activity_set3">Set3Activity</string>
+    <string name="title_activity_set4">Set4Activity</string>
+
+</resources>

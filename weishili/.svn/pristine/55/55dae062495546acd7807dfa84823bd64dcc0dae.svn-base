@@ -1,0 +1,76 @@
+package com.lilei.weishi2.activities;
+
+import android.content.Intent;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
+
+import com.lilei.weishi2.R;
+import com.lilei.weishi2.service.LostFindService;
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.RunningService;
+import com.lilei.weishi2.utils.SpTools;
+
+
+public class Set4Activity extends BaseSetupActivity {
+	private CheckBox cbIsChecked;
+	private TextView tvDescTextView;
+	@Override
+	public void nextActivity() {
+		// TODO Auto-generated method stub
+		startActivity(LostFindActivity.class);
+		//设置解决后 在sp中保存一个标记 下次初始化页面的时候就不进入设置界面
+		SpTools.putBoolean(getApplicationContext(), MyContant.ISSETUP, true);
+	}
+	@Override
+	public void initData() {
+		if(RunningService.isRunningService(getApplicationContext(), "com.lilei.weishi2.service.LostFindService")){
+			cbIsChecked.setChecked(true);
+		}else{
+			cbIsChecked.setChecked(false);
+		}
+		super.initData();
+	}
+	@Override
+	public void initEvent() {
+		cbIsChecked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked){ //开启服务
+					Intent service = new Intent(Set4Activity.this, LostFindService.class);
+					
+					startService(service);
+					tvDescTextView.setText("防盗服务已经开启");
+					SpTools.putBoolean(getApplicationContext(), MyContant.LOSTFIND, true);
+					System.out.println("服务开启");
+				}else{        //关闭服务
+					Intent service = new Intent(Set4Activity.this, LostFindService.class);
+					stopService(service);
+					tvDescTextView.setText("防盗服务已经关闭");
+					SpTools.putBoolean(getApplicationContext(), MyContant.LOSTFIND, false);
+					System.out.println("服务关闭");
+				}
+			}
+		});
+		super.initEvent();
+	}
+	@Override
+	public void preActivity() {
+		// TODO Auto-generated method stub
+		startActivity(Set3Activity.class);
+	}
+
+	@Override
+	public void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_set4);
+		cbIsChecked = (CheckBox) findViewById(R.id.cb_setup4_isprotected);
+		tvDescTextView = (TextView) findViewById(R.id.tv_desc);
+	}
+
+
+
+}

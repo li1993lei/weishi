@@ -1,0 +1,35 @@
+package com.lilei.weishi2.activities;
+
+import com.lilei.weishi2.R;
+import com.lilei.weishi2.R.id;
+import com.lilei.weishi2.R.layout;
+import com.lilei.weishi2.R.menu;
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.SpTools;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class LostFindActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		//如果第一次访问该页面 要首先进入设置界面
+		if(SpTools.getBoolean(getApplicationContext(), MyContant.ISSETUP, false)){
+			initView();//手机防盗界面
+		}else{  //进入设置界面并关闭自己
+ 			
+		}
+		initView();
+		
+	}
+
+	private void initView() {
+		// TODO Auto-generated method stub
+		setContentView(R.layout.activity_lost_find);
+	}
+
+}

@@ -1,0 +1,194 @@
+# view AndroidManifest.xml #generated:7
+-keep class android.test.InstrumentationTestRunner { <init>(...); }
+
+# view AndroidManifest.xml #generated:108
+-keep class cn.sharesdk.framework.ShareSDKUIShell { <init>(...); }
+
+# view AndroidManifest.xml #generated:236
+-keep class com.lilei.weishi2.activities.AntivirusActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:226
+-keep class com.lilei.weishi2.activities.ApkManagerActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:218
+-keep class com.lilei.weishi2.activities.AtoolsActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:210
+-keep class com.lilei.weishi2.activities.CallLogActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:238
+-keep class com.lilei.weishi2.activities.CleanCacheActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:234
+-keep class com.lilei.weishi2.activities.ConnactivityActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:156
+-keep class com.lilei.weishi2.activities.FriendActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:132
+-keep class com.lilei.weishi2.activities.HomeActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:232
+-keep class com.lilei.weishi2.activities.LockedActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:136
+-keep class com.lilei.weishi2.activities.LostFindActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:222
+-keep class com.lilei.weishi2.activities.PhoneLocationActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:140
+-keep class com.lilei.weishi2.activities.Set1Activity { <init>(...); }
+
+# view AndroidManifest.xml #generated:144
+-keep class com.lilei.weishi2.activities.Set2Activity { <init>(...); }
+
+# view AndroidManifest.xml #generated:148
+-keep class com.lilei.weishi2.activities.Set3Activity { <init>(...); }
+
+# view AndroidManifest.xml #generated:152
+-keep class com.lilei.weishi2.activities.Set4Activity { <init>(...); }
+
+# view AndroidManifest.xml #generated:198
+-keep class com.lilei.weishi2.activities.SettingCenterActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:214
+-keep class com.lilei.weishi2.activities.SmsLogActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:123
+-keep class com.lilei.weishi2.activities.SplashActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:228
+-keep class com.lilei.weishi2.activities.TaskManagerActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:230
+-keep class com.lilei.weishi2.activities.TaskManagerSettingActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:202
+-keep class com.lilei.weishi2.activities.TelephoneSafeActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:206
+-keep class com.lilei.weishi2.activities.TelephoneSafeActivityPage { <init>(...); }
+
+# view AndroidManifest.xml #generated:240
+-keep class com.lilei.weishi2.activities.WatchDogActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:174
+-keep class com.lilei.weishi2.receiver.BootCompleteReceiver { <init>(...); }
+
+# view AndroidManifest.xml #generated:179
+-keep class com.lilei.weishi2.receiver.ClearTaskReceiver { <init>(...); }
+
+# view AndroidManifest.xml #generated:184
+-keep class com.lilei.weishi2.receiver.DeviceReceiver { <init>(...); }
+
+# view AndroidManifest.xml #generated:245
+-keep class com.lilei.weishi2.receiver.ExampleAppWidgetProvider { <init>(...); }
+
+# view AndroidManifest.xml #generated:166
+-keep class com.lilei.weishi2.service.AppWidgetService { <init>(...); }
+
+# view AndroidManifest.xml #generated:163
+-keep class com.lilei.weishi2.service.BlackSmsTelService { <init>(...); }
+
+# view AndroidManifest.xml #generated:162
+-keep class com.lilei.weishi2.service.LocationService { <init>(...); }
+
+# view AndroidManifest.xml #generated:165
+-keep class com.lilei.weishi2.service.LockClearService { <init>(...); }
+
+# view AndroidManifest.xml #generated:161
+-keep class com.lilei.weishi2.service.LostFindService { <init>(...); }
+
+# view AndroidManifest.xml #generated:164
+-keep class com.lilei.weishi2.service.ShowPhoneLocationService { <init>(...); }
+
+# view AndroidManifest.xml #generated:170
+-keep class com.lilei.weishi2.service.WatchDogService { <init>(...); }
+
+# view res/layout/activity_home.xml #generated:12
+-keep class com.lilei.weishi2.view.MarqueeTextView { <init>(...); }
+
+# view res/layout/activity_setting_center.xml #generated:11
+# view res/layout/activity_setting_center.xml #generated:19
+# view res/layout/activity_setting_center.xml #generated:27
+# view res/layout/activity_setting_center.xml #generated:35
+-keep class com.lilei.weishi2.view.SettingItemView { <init>(...); }
+
+# view AndroidManifest.xml #generated:79
+-keep class com.lilei.weishi2.wxapi.WXEntryActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:87
+-keep class com.lilei.weishi2.yxapi.YXEntryActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:93
+-keep class com.mob.tools.MobUIShell { <init>(...); }
+
+# view AndroidManifest.xml #generated:74
+-keep class com.startapp.android.publish.FullScreenActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:70
+-keep class com.startapp.android.publish.OverlayActivity { <init>(...); }
+
+# view res/layout/activity_home.xml #generated:21
+-keep class com.startapp.android.publish.banner.Banner { <init>(...); }
+
+# view AndroidManifest.xml #generated:67
+-keep class com.startapp.android.publish.list3d.List3DActivity { <init>(...); }
+
+# onClick res/layout/activity_telephone_safe.xml #generated:15
+-keepclassmembers class * { *** addBlackNumber(...); }
+
+# onClick res/layout/activity_atools.xml #generated:22
+-keepclassmembers class * { *** backUpSms(...); }
+
+# onClick res/layout/activity_taskmanager.xml #generated:65
+-keepclassmembers class * { *** clearTask(...); }
+
+# onClick res/layout/activity_telephone_safe.xml #generated:72
+-keepclassmembers class * { *** endPage(...); }
+
+# onClick res/layout/activity_atools.xml #generated:54
+-keepclassmembers class * { *** enterLocked(...); }
+
+# onClick res/layout/activity_lost_find.xml #generated:31
+-keepclassmembers class * { *** enterSetting(...); }
+
+# onClick res/layout/activity_taskmanager.xml #generated:79
+-keepclassmembers class * { *** fanSelect(...); }
+
+# onClick res/layout/activity_telephone_safe.xml #generated:79
+-keepclassmembers class * { *** jumpPage(...); }
+
+# onClick res/layout/activity_set1.xml #generated:85
+# onClick res/layout/activity_set2.xml #generated:73
+# onClick res/layout/activity_set3.xml #generated:73
+# onClick res/layout/activity_set4.xml #generated:60
+-keepclassmembers class * { *** next(...); }
+
+# onClick res/layout/activity_telephone_safe.xml #generated:58
+-keepclassmembers class * { *** nextPage(...); }
+
+# onClick res/layout/activity_atools.xml #generated:10
+-keepclassmembers class * { *** phoneQuery(...); }
+
+# onClick res/layout/activity_set2.xml #generated:81
+# onClick res/layout/activity_set3.xml #generated:82
+# onClick res/layout/activity_set4.xml #generated:69
+-keepclassmembers class * { *** prev(...); }
+
+# onClick res/layout/activity_telephone_safe.xml #generated:65
+-keepclassmembers class * { *** prevPage(...); }
+
+# onClick res/layout/activity_atools.xml #generated:42
+-keepclassmembers class * { *** resumeSms(...); }
+
+# onClick res/layout/activity_taskmanager.xml #generated:72
+-keepclassmembers class * { *** selectAll(...); }
+
+# onClick res/layout/activity_set3.xml #generated:27
+-keepclassmembers class * { *** selectSafeNumber(...); }
+
+# onClick res/layout/activity_taskmanager.xml #generated:86
+-keepclassmembers class * { *** setting(...); }
+

@@ -1,0 +1,84 @@
+package com.lilei.weishi2.service;
+
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.SpTools;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.telephony.gsm.SmsManager;
+import android.telephony.gsm.SmsMessage;
+
+public class LocationService extends Service {
+
+	private LocationManager lm;
+	private MyLocationListener listener;
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onCreate() {
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		listener = new MyLocationListener();
+		lm.requestLocationUpdates("gps", 0, 0, listener);
+	}
+	@Override
+	public void onDestroy() {
+		lm.removeUpdates(listener);
+		super.onDestroy();
+	}
+	private class MyLocationListener implements LocationListener {
+		// 当位置发生变化是回调此方法
+		@Override
+		public void onLocationChanged(Location location) {
+			// TODO Auto-generated method stub
+			float accuracy = location.getAccuracy();// 精确度,以米为单位
+			double altitude = location.getAltitude();// 获取海拔高度
+			double longitude = location.getLongitude();// 获取经度
+			double latitude = location.getLatitude();// 获取纬度
+			float speed = location.getSpeed();// 速度
+			//定位信息
+			StringBuilder tv_mess = new StringBuilder();
+			tv_mess.append("accuracy:" + accuracy + "\n");
+			tv_mess.append("altitude:" + altitude + "\n");
+			tv_mess.append("longitude:" + longitude + "\n");
+			tv_mess.append("latitude:" + latitude + "\n");
+			tv_mess.append("speed:" + speed + "\n");
+			
+			//发送短信
+			String number = SpTools.getString(getApplicationContext(), MyContant.SAFENUMBER, "");
+			SmsManager sm = SmsManager.getDefault();
+			sm.sendTextMessage(number, "", tv_mess.toString(), null, null);
+			//关闭GPS
+			stopSelf();
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+}

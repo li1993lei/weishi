@@ -1,0 +1,40 @@
+package com.lilei.weishi2.receiver;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.SmsManager;
+
+import com.lilei.weishi2.activities.Set4Activity;
+import com.lilei.weishi2.service.LostFindService;
+import com.lilei.weishi2.utils.MyContant;
+import com.lilei.weishi2.utils.SpTools;
+
+public class BootCompleteReceiver extends BroadcastReceiver {
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		String olderNumber = SpTools.getString(context, MyContant.SIM, "");
+		TelephonyManager tmManager = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		String newNumber = tmManager.getSimSerialNumber();
+		if (!olderNumber.equals(newNumber + "1")) { // 代表sim卡被更改了
+			String safenumber = SpTools.getString(context,
+					MyContant.SAFENUMBER, "");
+			@SuppressWarnings("deprecation")
+			SmsManager sm = SmsManager.getDefault();
+			sm.sendTextMessage(safenumber, "", "ni shou ji bei wo tou le  za di", null, null);
+			System.out.println("卡已经被换了");
+		}
+		//开机启动 防盗服务
+		if(SpTools.getBoolean(context, MyContant.LOSTFIND, false)){
+			Intent service = new Intent(context, LostFindService.class);
+
+			context.startService(service);
+	//		System.out.println("开机自动重启》》》》》》》");
+		}
+	}
+
+}

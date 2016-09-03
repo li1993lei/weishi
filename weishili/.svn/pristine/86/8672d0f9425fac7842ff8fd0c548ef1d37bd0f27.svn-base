@@ -1,0 +1,21 @@
+package com.lilei.weishi2.activities;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class Set1Activity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		initView();
+	}
+
+	private void initView() {
+		setContentView(R.layout.activity_set1);
+	}
+
+	
+}
